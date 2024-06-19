@@ -1,5 +1,6 @@
 from random import choice
 
+import matplotlib.pyplot as plt
 import pandas as pd
 import streamlit as st
 
@@ -111,3 +112,24 @@ if st.button("Create"):
             },
         )
         st.dataframe(df, use_container_width=True)
+
+        # hide axes
+        fig, ax = plt.subplots()
+        fig.patch.set_visible(False)
+        ax.axis('off')
+        ax.axis('tight')
+        
+        ax.table(cellText=df.values, colLabels=df.columns, loc='center', cellLoc='left')
+        
+        fig.tight_layout()
+        
+        # Save to file first or an image file has already existed.
+        fn = 'weekly.png'
+        plt.savefig(fn)
+        with open(fn, "rb") as img:
+            btn = st.download_button(
+                label="Download",
+                data=img,
+                file_name=fn,
+                mime="image/png"
+            )
