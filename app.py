@@ -71,12 +71,26 @@ dinner_list = [
 ]
 
 
-def get_breakfast():
+def get_breakfast() -> str:
     return choice(breakfast_list)
 
 
-def get_dinner():
+def get_dinner() -> str:
     return choice(dinner_list)
+
+def append_with_spacing(lst, item):
+    if item in lst:
+        # Find the index of the last occurrence of the item
+        last_index = len(lst) - 1 - lst[::-1].index(item)
+        # Check if there are at least three different items in between
+        if len(lst) - last_index == 4:
+            lst.append(item)
+            return True
+        else:
+            return False  # Not enough space to append the item
+    else:
+        lst.append(item)
+        return True
 
 
 st.title(title)
@@ -104,11 +118,19 @@ if st.button("Create"):
             "Saturday",
             "Sunday",
         ]
+        selected_breakfasts: list[str] = []
+        selected_dinners: list[str] = []
+
+        while len(selected_breakfasts) < 7:
+            append_with_spacing(selected_breakfasts, get_breakfast())
+        while len(selected_dinners) < 7:
+            append_with_spacing(selected_dinners, get_dinner())
+
         df = pd.DataFrame(
             index=days,
             data={
-                "Breakfast": [get_breakfast() for _ in range(7)],
-                "Dinner": [get_dinner() for _ in range(7)],
+                "Breakfast": selected_breakfasts,
+                "Dinner": selected_dinners,
             },
         )
         st.dataframe(df, use_container_width=True)
