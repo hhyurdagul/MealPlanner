@@ -1,4 +1,4 @@
-from random import choice
+from random import sample
 
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -70,29 +70,6 @@ dinner_list = [
     "Çoban Kavurma",
 ]
 
-
-def get_breakfast() -> str:
-    return choice(breakfast_list)
-
-
-def get_dinner() -> str:
-    return choice(dinner_list)
-
-def append_with_spacing(lst, item):
-    if item in lst:
-        # Find the index of the last occurrence of the item
-        last_index = len(lst) - 1 - lst[::-1].index(item)
-        # Check if there are at least three different items in between
-        if len(lst) - last_index == 4:
-            lst.append(item)
-            return True
-        else:
-            return False  # Not enough space to append the item
-    else:
-        lst.append(item)
-        return True
-
-
 st.title(title)
 
 radio = st.radio("Choose your planner mode", ["Day", "Week"])
@@ -103,10 +80,10 @@ if st.button("Create"):
         col1, col2 = st.columns(2)
 
         with col1:
-            st.write("### Breakfast\n\n", get_breakfast())
+            st.write("### Breakfast\n\n", sample(breakfast_list, 1)[0])
 
         with col2:
-            st.write("### Dinner\n\n", get_dinner())
+            st.write("### Dinner\n\n", sample(dinner_list, 1)[0])
 
     else:
         days = [
@@ -118,19 +95,12 @@ if st.button("Create"):
             "Saturday",
             "Sunday",
         ]
-        selected_breakfasts: list[str] = []
-        selected_dinners: list[str] = []
-
-        while len(selected_breakfasts) < 7:
-            append_with_spacing(selected_breakfasts, get_breakfast())
-        while len(selected_dinners) < 7:
-            append_with_spacing(selected_dinners, get_dinner())
 
         df = pd.DataFrame(
             index=days,
             data={
-                "Breakfast": selected_breakfasts,
-                "Dinner": selected_dinners,
+                "Breakfast": sample(breakfast_list, len(days)),
+                "Dinner": sample(dinner_list, len(days)),
             },
         )
         st.dataframe(df, use_container_width=True)
@@ -141,7 +111,7 @@ if st.button("Create"):
         ax.axis('off')
         ax.axis('tight')
         
-        ax.table(cellText=df.values, colLabels=df.columns, loc='center', cellLoc='left')
+        ax.table(cellText=df.values, colLabels=df.columns, loc='center', cellLoc='center')
         
         fig.tight_layout()
         
